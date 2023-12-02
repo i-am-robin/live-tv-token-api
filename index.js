@@ -5,7 +5,7 @@ const app = express();
 
 app.use(cors());
 
-app.get("/token", async (req, res) => {
+app.get("/", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
