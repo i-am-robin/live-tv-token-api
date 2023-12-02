@@ -5,6 +5,10 @@ const app = express();
 
 app.use(cors());
 
+app.get("/t", req, (res) => {
+  res.json({ error: "No matching URL found" });
+});
+
 app.get("/", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
