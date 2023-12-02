@@ -5,11 +5,11 @@ const app = express();
 
 app.use(cors());
 
-app.get("/t", (req, res) => {
-  res.json({ error: "No matching URL found" });
+app.get("/", (req, res) => {
+  res.send("server is runing on port dsfjk");
 });
 
-app.get("/", async (req, res) => {
+app.get("/token", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
