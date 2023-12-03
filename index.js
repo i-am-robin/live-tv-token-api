@@ -1,22 +1,60 @@
-require("dotenv").config();
-const puppeteer = require("puppeteer-core");
-const chromium = require("chrome-aws-lambda");
+const puppeteer = require("puppeteer");
+const express = require("express");
+const cors = require("cors");
+const app = express();
 
-const app = require("express")();
+app.use(cors());
 
 app.get("/", async (req, res) => {
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath:
-      process.env.CHORME_EXICUTEABLE_PATH || (await chromium.executablePath),
-    headless: true,
-  });
+  try {
+    const browser = await puppeteer.launch({
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+    });
 
-  const page = await browser.newPage();
-  await page.goto("https://pptr.dev/");
-  const title = await page.title();
+    const page = await browser.newPage();
 
-  res.send(title);
+    // Enable request interception
+    await page.setRequestInterception(true);
+
+    let matchingURL = null;
+
+    page.on("request", async (request) => {
+      const url = request.url();
+      console.log(url);
+
+      if (url.includes("http://tv.ebox.live:8080/roarzone/") && !matchingURL) {
+        matchingURL = url;
+        console.log(matchingURL);
+      }
+
+      // Continue other requests
+      request.continue();
+    });
+
+    await page.goto("http://tv.ebox.live/");
+
+    // Close the browser after a certain time
+    setTimeout(async () => {
+      await browser.close();
+    }, 7000); // Adjust the timeout value as needed
+    if (matchingURL) {
+      const match = matchingURL.match(/token=([^&]*)/);
+      const tokenValue = match ? match[1] : null;
+      console.log(tokenValue);
+      res.json({ url: matchingURL, token: tokenValue });
+    } else {
+      res.json({ error: "No matching URL found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ error: error });
+  }
 });
 
-app.listen(5000, () => console.log("server is runing on port 5000..."));
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
