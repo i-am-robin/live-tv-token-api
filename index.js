@@ -49,16 +49,15 @@ app.get("/token", async (req, res) => {
     // Close the browser after a certain time
     setTimeout(async () => {
       await browser.close();
-
-      if (matchingURL) {
-        const match = matchingURL.match(/token=([^&]*)/);
-        const tokenValue = match ? match[1] : null;
-        console.log(tokenValue);
-        res.json({ url: matchingURL, token: tokenValue });
-      } else {
-        res.json({ error: "No matching URL found" });
-      }
     }, 7000); // Adjust the timeout value as needed
+    if (matchingURL) {
+      const match = matchingURL.match(/token=([^&]*)/);
+      const tokenValue = match ? match[1] : null;
+      console.log(tokenValue);
+      res.json({ url: matchingURL, token: tokenValue });
+    } else {
+      res.json({ error: "No matching URL found" });
+    }
   } catch (error) {
     console.log(error);
     res.json({ error: error });
