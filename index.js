@@ -44,7 +44,7 @@ app.get("/token", async (req, res) => {
       request.continue();
     });
 
-    await page.goto("http://tv.ebox.live/");
+    await page.goto("http://tv.ebox.live/", { timeout: 60000 });
 
     // Close the browser after a certain time
     setTimeout(async () => {
