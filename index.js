@@ -40,7 +40,7 @@ app.get("/", async (req, res) => {
       request.continue();
     });
 
-    await page.goto("http://tv.ebox.live/");
+    await page.goto("http://tv.ebox.live/", { timeout: 900000000 });
 
     // Close the browser after a certain time
     setTimeout(async () => {
