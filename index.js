@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("server is runing on port dsfjk");
+  res.send("server is running on port 5000");
 });
 
 app.get("/token", async (req, res) => {
@@ -37,30 +37,33 @@ app.get("/token", async (req, res) => {
 
       if (url.includes("http://tv.ebox.live:8080/roarzone/") && !matchingURL) {
         matchingURL = url;
-        await browser.close();
-      } else {
-        // Continue other requests
-        request.continue();
+        console.log(matchingURL);
       }
+
+      // Continue other requests
+      request.continue();
     });
 
     await page.goto("http://tv.ebox.live/");
 
-    // Close the browser if no matching request is found within a certain time
+    // Close the browser after a certain time
     setTimeout(async () => {
       await browser.close();
-    }, 5000); // Adjust the timeout value as needed
 
-    if (matchingURL) {
-      const match = matchingURL.match(/token=([^&]*)/);
-      const tokenValue = match ? match[1] : null;
-      res.json({ url: matchingURL, token: tokenValue });
-    } else {
-      res.json({ error: "No matching URL found" });
-    }
+      if (matchingURL) {
+        const match = matchingURL.match(/token=([^&]*)/);
+        const tokenValue = match ? match[1] : null;
+        console.log(tokenValue);
+        res.json({ url: matchingURL, token: tokenValue });
+      } else {
+        res.json({ error: "No matching URL found" });
+      }
+    }, 7000); // Adjust the timeout value as needed
   } catch (error) {
-    res.json({ error: "No matching URL found" });
+    console.log(error);
+    res.json({ error: error });
   }
 });
 
-app.listen("5000", () => console.log("server is runing on port 5000"));
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
