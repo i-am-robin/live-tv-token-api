@@ -7,14 +7,7 @@ app.use(cors());
 
 app.get("/", async (req, res) => {
   try {
-    const browser = await puppeteer.launch({
-      args: [
-        "--disable-setuid-sandbox",
-        "--no-sandbox",
-        "--single-process",
-        "--no-zygote",
-      ],
-    });
+    const browser = await puppeteer.launch({});
 
     const page = await browser.newPage();
 
